@@ -26,10 +26,11 @@ interface ContactViewProps {
 }
 
 const ENGAGEMENT_TYPES = [
-  { value: 'review', label: 'Review Engagement' },
-  { value: 'audit', label: 'Full GAAP Audit' },
-  { value: 'ipo', label: 'IPO / PCAOB Readiness' },
-  { value: 'ma', label: 'M&A Diligence Support' },
+  { value: 'audit', label: 'Statutory Audit (Cap. 622)' },
+  { value: 'tax', label: 'Tax Advisory & IRD Filing' },
+  { value: 'sec', label: 'Company Secretarial Services' },
+  { value: 'bookkeeping', label: 'Accounting & Bookkeeping BPO' },
+  { value: 'advisory', label: 'Company Formation & GBA Advisory' },
 ]
 
 export function ContactView({ onBack, onSuccess }: ContactViewProps) {
@@ -138,7 +139,7 @@ export function ContactView({ onBack, onSuccess }: ContactViewProps) {
 
           <Field data-invalid={touched && errors.engagement ? true : undefined}>
             <FieldLabel htmlFor="engagement">Engagement type</FieldLabel>
-            <Select value={engagement} onValueChange={setEngagement}>
+            <Select value={engagement} onValueChange={(val) => setEngagement(val || '')}>
               <SelectTrigger id="engagement" className="w-full">
                 <SelectValue placeholder="Select an engagement type" />
               </SelectTrigger>

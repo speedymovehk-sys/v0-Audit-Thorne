@@ -27,12 +27,12 @@ export function ActionModal({ open, onOpenChange }: ActionModalProps) {
             <CheckCircle className="size-6 text-primary" />
           </span>
           <DialogTitle className="text-lg tracking-tight">
-            Audit Briefing Initiated
+            Consultation Request Received
           </DialogTitle>
           <DialogDescription className="text-pretty leading-relaxed">
-            Thank you. A senior engagement partner will review your firm profile
+            Thank you. A senior CPA partner will review your firm profile
             and reach out within one business day to schedule your confidential
-            scope assessment. No obligation, fully privileged.
+            service consultation. No obligation, fully privileged.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

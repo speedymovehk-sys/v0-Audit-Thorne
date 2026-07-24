@@ -1,85 +1,121 @@
 'use client'
 
-import { motion, useReducedMotion } from 'motion/react'
-import { ArrowRight, ShieldCheck } from 'lucide-react'
+import { useRef } from 'react'
+import Image from 'next/image'
+import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react'
+import { ArrowRight, ShieldCheck, ChevronDown } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { PortalVisual } from '@/components/portal-visual'
+import { Language, TRANSLATIONS } from '@/lib/translations'
 
 interface HeroSectionProps {
+  lang: Language
   onSchedule: () => void
 }
 
-const TRUSTED_BY = [
-  'NORTHBRIDGE',
-  'VERTEX LABS',
-  'MERIDIAN CO',
-  'ALTUS GROUP',
-  'CADENCE IO',
-]
-
-export function HeroSection({ onSchedule }: HeroSectionProps) {
+export function HeroSection({ lang, onSchedule }: HeroSectionProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
   const reduceMotion = useReducedMotion()
+  const t = TRANSLATIONS[lang]
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end start'],
+  })
+
+  // Subtle parallax on the background image
+  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '20%'])
+  // Fade out content as user scrolls away
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
+  const contentY = useTransform(scrollYProgress, [0, 0.6], [0, -40])
 
   return (
-    <section id="top" className="w-full border-b border-border">
-      <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-12 px-6 py-20 md:grid-cols-2 md:items-center md:py-28">
+    <section
+      id="top"
+      ref={containerRef}
+      className="relative w-full overflow-hidden"
+      style={{ height: '100vh', minHeight: '600px' }}
+    >
+      {/* Full-viewport Background Image with Parallax */}
+      <motion.div
+        style={{ y: reduceMotion ? 0 : bgY }}
+        className="absolute inset-0 w-full h-[120%] -top-[10%]"
+      >
+        <Image
+          src="/images/hero_hk_suite.png"
+          alt="Thorne & Co. Financial Advisory Suite in Central, Hong Kong"
+          fill
+          sizes="100vw"
+          priority
+          className="object-cover"
+        />
+      </motion.div>
+
+      {/* Dark Gradient Overlay for Text Legibility */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/40 to-black/70 pointer-events-none" />
+
+      {/* Content — Vertically & Horizontally Centered */}
+      <motion.div
+        style={{
+          opacity: reduceMotion ? 1 : contentOpacity,
+          y: reduceMotion ? 0 : contentY,
+        }}
+        className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center"
+      >
         <motion.div
-          initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+          initial={reduceMotion ? false : { opacity: 0, y: 30 }}
           animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="flex flex-col items-start"
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="flex flex-col items-center"
         >
-          <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 font-mono text-xs font-medium text-muted-foreground">
-            <ShieldCheck className="size-3.5 text-primary" />
-            PCAOB-aligned methodology
+          <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm px-4 py-1.5 font-mono text-xs font-semibold text-white/90">
+            <ShieldCheck className="size-3.5 text-white animate-pulse" />
+            {t.heroBadge}
           </span>
 
-          <h1 className="text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-            Institutional-grade audits. Frictionless execution.
+          <h1 className="text-balance text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-7xl max-w-5xl leading-[1.1]">
+            {t.heroTitle}
           </h1>
 
-          <p className="mt-6 max-w-md text-pretty text-lg leading-relaxed text-muted-foreground">
-            Precision auditing, regulatory compliance, and M&amp;A/IPO readiness
-            for high-growth mid-market enterprises and VC-backed technology
-            corporations.
+          <p className="mt-6 max-w-2xl text-pretty text-base md:text-lg leading-relaxed text-white/80">
+            {t.heroBody}
           </p>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button size="lg" onClick={onSchedule}>
-              Initiate Scope Assessment
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            <Button size="lg" onClick={onSchedule} className="shadow-lg shadow-primary/30">
+              {t.heroBtnConsult}
               <ArrowRight data-icon="inline-end" />
             </Button>
-            <Button size="lg" variant="outline" render={<a href="#methodology" />}>
-              Our Methodology
+            <Button
+              size="lg"
+              variant="outline"
+              nativeButton={false}
+              render={<a href="#services" />}
+              className="border-white/50 bg-white/10 text-white hover:bg-white/20 hover:border-white/70 backdrop-blur-sm"
+            >
+              {t.heroBtnServices}
             </Button>
           </div>
-
-          <div className="mt-14 w-full">
-            <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-              Compliance infrastructure trusted by
-            </p>
-            <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-3">
-              {TRUSTED_BY.map((name) => (
-                <span
-                  key={name}
-                  className="font-mono text-sm font-semibold tracking-tight text-muted-foreground/60"
-                >
-                  {name}
-                </span>
-              ))}
-            </div>
-          </div>
         </motion.div>
+      </motion.div>
 
+      {/* Scroll-down Indicator */}
+      <motion.div
+        initial={reduceMotion ? false : { opacity: 0 }}
+        animate={reduceMotion ? undefined : { opacity: 1 }}
+        transition={{ delay: 1.2, duration: 0.6 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1"
+      >
+        <span className="font-mono text-[10px] uppercase tracking-widest text-white/50">
+          {lang === 'EN' ? 'Scroll' : '向下捲動'}
+        </span>
         <motion.div
-          initial={reduceMotion ? false : { opacity: 0, scale: 0.96 }}
-          animate={reduceMotion ? undefined : { opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+          animate={{ y: [0, 6, 0] }}
+          transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
         >
-          <PortalVisual />
+          <ChevronDown className="size-5 text-white/50" />
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   )
 }

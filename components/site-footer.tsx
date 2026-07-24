@@ -3,15 +3,19 @@
 import { ArrowUp } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { Language, TRANSLATIONS } from '@/lib/translations'
 
 interface SiteFooterProps {
+  lang?: Language
   onSchedule: () => void
 }
 
-export function SiteFooter({ onSchedule }: SiteFooterProps) {
+export function SiteFooter({ lang = 'EN', onSchedule }: SiteFooterProps) {
   function scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
+
+  const t = TRANSLATIONS[lang]
 
   return (
     <footer className="w-full border-t border-border bg-background pb-24 md:pb-12">
@@ -24,17 +28,16 @@ export function SiteFooter({ onSchedule }: SiteFooterProps) {
               <span className="text-muted-foreground">ASSURANCE</span>
             </div>
             <p className="mt-4 text-pretty leading-relaxed text-muted-foreground">
-              Institutional-grade audit and advisory for high-growth
-              enterprises. Partner-led, systems-native, deadline-proof.
+              {t.footerDesc}
             </p>
           </div>
 
           <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             <Button size="lg" onClick={onSchedule}>
-              Schedule Audit
+              {t.btnSchedule}
             </Button>
             <Button variant="outline" size="lg" onClick={scrollToTop}>
-              Back to top
+              {t.footerBtnBackTop}
               <ArrowUp data-icon="inline-end" />
             </Button>
           </div>
@@ -42,10 +45,9 @@ export function SiteFooter({ onSchedule }: SiteFooterProps) {
 
         <div className="mt-12 flex flex-col gap-2 border-t border-border pt-6 font-mono text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <span>
-            &copy; {new Date().getFullYear()} Thorne Assurance &amp; Advisory,
-            LLP. A fictional demonstration brand.
+            &copy; {new Date().getFullYear()} {t.footerLegal}
           </span>
-          <span>PCAOB-aligned methodology &middot; Privileged &amp; confidential</span>
+          <span>{t.footerCompliance}</span>
         </div>
       </div>
     </footer>
